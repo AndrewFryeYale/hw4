@@ -60,4 +60,4 @@
 
 ## Problem 13
 
-1. Problem 13: [Image #2] Zip it according to these instructions, i have already set up the github repository at https://github.com/AndrewFryeYale/hw4.git, let me know if there is anything else you need. You should also have context on my github from previous work
+1. Problem 13: Upload the project to GitHub so I can submit, i have already set up the github repository at https://github.com/AndrewFryeYale/hw4.git, let me know if there is anything else you need. You should also have context on my github from previous work
