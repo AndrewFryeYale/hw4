@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Customs — Live App Check</title>
+<style>
+:root { --blue:#00356b; --blue-d:#00254a; --brass:#c19a49; --paper:#fffdf8; --bg:#fbf7ef; --line:#e6dccb; --muted:#5e636b; --pass:#1f7a45; --pass-bg:#e5f4ea; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:#1f2328; font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+header { background:var(--blue); color:#fff; padding:28px 16px 24px; border-bottom:4px solid var(--brass); }
+.wrap { max-width:1100px; margin:0 auto; padding:0 16px; }
+header h1 { margin:0 0 4px; font:700 30px/1.2 Georgia,serif; }
+header p { margin:0; color:#cfdcec; }
+h2 { font:700 24px/1.25 Georgia,serif; color:var(--blue-d); margin:0 0 6px; }
+h3 { font-size:15px; text-transform:uppercase; letter-spacing:.08em; color:var(--blue); margin:22px 0 8px; }
+.summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:24px 0 8px; }
+.card { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+.card a { color:var(--blue-d); font-weight:700; text-decoration:none; }
+.card p { margin:6px 0 0; color:var(--muted); font-size:14px; }
+.badge { display:inline-block; background:var(--pass-bg); color:var(--pass); font-weight:800; font-size:12px; letter-spacing:.06em; padding:2px 9px; border-radius:999px; margin-right:6px; }
+.meta { font-size:14px; color:var(--muted); margin:10px 0 0; }
+section.check { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:24px; margin:26px 0; }
+.goal { color:var(--muted); margin:0 0 4px; }
+ol.steps { margin:0; padding-left:20px; } ol.steps li { margin:2px 0; }
+table { width:100%; border-collapse:collapse; font-size:14.5px; margin-top:4px; }
+th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:#f4eee2; font-weight:700; }
+td.ok { color:var(--pass); font-weight:700; white-space:nowrap; }
+q { font-style:italic; }
+.figs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:10px; }
+figure { margin:0; background:#fff; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+figure.wide { grid-column:1 / -1; }
+figure img { display:block; width:100%; height:auto; }
+figure.narrow img { max-height:520px; object-fit:contain; background:#f6f2e9; }
+figcaption { padding:10px 14px; font-size:14.5px; border-top:1px solid var(--line); }
+.fname { display:block; font:12px ui-monospace,Menlo,monospace; color:var(--muted); margin-bottom:2px; }
+footer { color:var(--muted); font-size:13.5px; padding:10px 0 40px; }
+code { font:13px ui-monospace,Menlo,monospace; background:#f4eee2; padding:1px 5px; border-radius:4px; }
+@media (max-width:700px) { .figs { grid-template-columns:1fr; } section.check { padding:16px; } table { display:block; overflow-x:auto; } code { word-break:break-all; } }
+</style></head><body>
+<header><div class="wrap">
+<h1>Campus Customs — Live App Check (HW4 Problem 11)</h1>
+<p>Tested on the running site: front end <code style="background:#ffffff22;color:#fff">localhost:5173</code> → FastAPI + Pydantic AI agent <code style="background:#ffffff22;color:#fff">localhost:8000</code>. Every number below was checked against <code style="background:#ffffff22;color:#fff">data/campus_customs.db</code>.</p>
+</div></header>
+<main class="wrap">
+
+<div class="summary">
+  <div class="card"><span class="badge">PASS</span><a href="#inventory">1. Chat checks inventory</a><p>Asked about the item on screen. The chat answered 12 in M and 2 in XXL, matching the database.</p></div>
+  <div class="card"><span class="badge">PASS</span><a href="#search">2. Dynamic search result cards</a><p>One chat question put 27 hoodie cards on the Products page (DB has 27), and a card click opens the item page.</p></div>
+  <div class="card"><span class="badge">PASS</span><a href="#usability">3. Problem 9 usability feature</a><p>Filter &amp; sort toolbar: 102 → 27 in-stock hoodies, sorted $45 → $88. Bonus: quick-reply chips.</p></div>
+</div>
+<p class="meta">Run: Wed Oct 07 2026 21:12:24 GMT-0400 (Eastern Daylight Time) · Headless Chrome, 1366×860 at 2× resolution · Browsing as a guest, so nothing was written to the DB · Browser console errors during the run: <strong>0</strong> · Click any screenshot to open it full size.</p>
+
+<section class="check" id="inventory">
+<h2>1. Chat checks the inventory level of an item</h2>
+<p class="goal">Goal: the assistant answers stock questions with the real count from the <code>inventory</code> table. It doesn't guess.</p>
+<h3>Steps</h3>
+<ol class="steps">
+<li>Open the <strong>Yale Mom Crewneck</strong> product page and click <strong>Ask our assistant about this item</strong>.</li>
+<li>Ask <q>How many do you have left in a medium?</q> (no product named: the agent knows which page is open).</li>
+<li>Follow up with <q>And how many in XXL?</q> and compare with the site's own size picker.</li>
+</ol>
+<div class="figs">
+<figure class="wide"><a href="app_check_images/01_inventory_question.png" target="_blank"><img src="app_check_images/01_inventory_question.png" alt="Question typed in the chat on the Yale Mom Crewneck page. The chat was opened with the “Ask our assistant about this item” button." loading="lazy"></a>
+<figcaption><span class="fname">01_inventory_question.png</span>Question typed in the chat on the Yale Mom Crewneck page. The chat was opened with the “Ask our assistant about this item” button.</figcaption></figure>
+<figure class="wide"><a href="app_check_images/02_inventory_answer.png" target="_blank"><img src="app_check_images/02_inventory_answer.png" alt="&lt;strong&gt;Answer:&lt;/strong&gt; “We have 12 Yale Mom Crewnecks left in a medium. Boola Boola!” (5.2 s). The agent called its &lt;code&gt;check_stock&lt;/code&gt; tool for this product and size M." loading="lazy"></a>
+<figcaption><span class="fname">02_inventory_answer.png</span><strong>Answer:</strong> “We have 12 Yale Mom Crewnecks left in a medium. Boola Boola!” (5.2 s). The agent called its <code>check_stock</code> tool for this product and size M.</figcaption></figure>
+<figure class="narrow"><a href="app_check_images/02b_inventory_answer_closeup.png" target="_blank"><img src="app_check_images/02b_inventory_answer_closeup.png" alt="Close-up of the chat answer." loading="lazy"></a>
+<figcaption><span class="fname">02b_inventory_answer_closeup.png</span>Close-up of the chat answer.</figcaption></figure>
+<figure class="narrow"><a href="app_check_images/04_inventory_followup_xxl.png" target="_blank"><img src="app_check_images/04_inventory_followup_xxl.png" alt="Follow-up: “There are 2 Yale Mom Crewnecks left in XXL.” The agent kept the context of the conversation." loading="lazy"></a>
+<figcaption><span class="fname">04_inventory_followup_xxl.png</span>Follow-up: “There are 2 Yale Mom Crewnecks left in XXL.” The agent kept the context of the conversation.</figcaption></figure>
+<figure class="wide"><a href="app_check_images/03_inventory_size_picker.png" target="_blank"><img src="app_check_images/03_inventory_size_picker.png" alt="Cross-check: the product page&#x27;s own size picker shows &lt;q&gt;12 left in M.&lt;/q&gt;, the same number as the chat. The XXL button has the low-stock underline (only 2 left)." loading="lazy"></a>
+<figcaption><span class="fname">03_inventory_size_picker.png</span>Cross-check: the product page's own size picker shows <q>12 left in M.</q>, the same number as the chat. The XXL button has the low-stock underline (only 2 left).</figcaption></figure>
+</div>
+<h3>Verified against the database</h3>
+<table><tr><th>Question</th><th>Chat said</th><th>DB: <code>inventory.quantity</code></th><th>Result</th></tr>
+<tr><td>Medium (M)</td><td>12 left</td><td>yale-mom-crewneck, M = 12</td><td class="ok">✔ Match</td></tr>
+<tr><td>XXL</td><td>2 left</td><td>yale-mom-crewneck, XXL = 2</td><td class="ok">✔ Match</td></tr></table>
+</section>
+
+<section class="check" id="search">
+<h2>2. Dynamic search results: cards appear on the page after a question</h2>
+<p class="goal">Goal: asking the chat what's available makes the agent return structured product matches (<code>page_update</code>), and the front end shows them as product cards on the site.</p>
+<h3>Steps</h3>
+<ol class="steps">
+<li>From the Home page, open the chat and ask <q>What hoodies are available?</q></li>
+<li>Watch the site switch to the Products page and fill with the matches.</li>
+<li>Click the first result card to confirm the single-item page still opens.</li>
+</ol>
+<div class="figs">
+<figure class="wide"><a href="app_check_images/05_search_question_home.png" target="_blank"><img src="app_check_images/05_search_question_home.png" alt="Question typed on the Home page, before sending." loading="lazy"></a>
+<figcaption><span class="fname">05_search_question_home.png</span>Question typed on the Home page, before sending.</figcaption></figure>
+<figure class="wide"><a href="app_check_images/06_search_results_page.png" target="_blank"><img src="app_check_images/06_search_results_page.png" alt="&lt;strong&gt;After the answer:&lt;/strong&gt; the site moved to &lt;code&gt;/products&lt;/code&gt; by itself, with the heading &lt;q&gt;From your chat · Hoodies&lt;/q&gt; and &lt;strong&gt;27 product cards&lt;/strong&gt;. The chat says &lt;q&gt;Showing 27 items on the page: Hoodies&lt;/q&gt; and shows top picks." loading="lazy"></a>
+<figcaption><span class="fname">06_search_results_page.png</span><strong>After the answer:</strong> the site moved to <code>/products</code> by itself, with the heading <q>From your chat · Hoodies</q> and <strong>27 product cards</strong>. The chat says <q>Showing 27 items on the page: Hoodies</q> and shows top picks.</figcaption></figure>
+<figure class="narrow"><a href="app_check_images/06b_search_reply_closeup.png" target="_blank"><img src="app_check_images/06b_search_reply_closeup.png" alt="Chat reply close-up: “I found 27 hoodies and put them all on the Products page for you. Standouts include the Basic Hoodie Big Yale, Champion Reverse Weave Hoodie 1, and Yale Dad Hoodie. Boola Boola!”" loading="lazy"></a>
+<figcaption><span class="fname">06b_search_reply_closeup.png</span>Chat reply close-up: “I found 27 hoodies and put them all on the Products page for you. Standouts include the Basic Hoodie Big Yale, Champion Reverse Weave Hoodie 1, and Yale Dad Hoodie. Boola Boola!”</figcaption></figure>
+<figure class="narrow"><a href="app_check_images/08_search_card_opens_detail.png" target="_blank"><img src="app_check_images/08_search_card_opens_detail.png" alt="Clicking the first result card (&lt;q&gt;Basic Hoodie Big Yale&lt;/q&gt;) opens &lt;code&gt;/products/basic-hoodie-big-yale&lt;/code&gt;. The Problem 3 single-item page still works." loading="lazy"></a>
+<figcaption><span class="fname">08_search_card_opens_detail.png</span>Clicking the first result card (<q>Basic Hoodie Big Yale</q>) opens <code>/products/basic-hoodie-big-yale</code>. The Problem 3 single-item page still works.</figcaption></figure>
+<figure class="wide"><a href="app_check_images/07_search_results_grid.png" target="_blank"><img src="app_check_images/07_search_results_grid.png" alt="The results grid with the chat closed. These are the site&#x27;s normal product cards (photo, name, description, price, color swatches), built from the database." loading="lazy"></a>
+<figcaption><span class="fname">07_search_results_grid.png</span>The results grid with the chat closed. These are the site's normal product cards (photo, name, description, price, color swatches), built from the database.</figcaption></figure>
+</div>
+<h3>Verified against the database</h3>
+<table><tr><th>Check</th><th>Site showed</th><th>Expected</th><th>Result</th></tr>
+<tr><td>Number of hoodie cards</td><td>27</td><td>27 hoodies in <code>catalogue</code></td><td class="ok">✔ Match</td></tr>
+<tr><td>Page updated without a reload</td><td>Home → <code>/products</code>, heading “Hoodies”</td><td>Results rendered from the chat</td><td class="ok">✔</td></tr>
+<tr><td>Card click → item page</td><td><code>/products/basic-hoodie-big-yale</code></td><td>Single-item page opens</td><td class="ok">✔</td></tr></table>
+</section>
+
+<section class="check" id="usability">
+<h2>3. Problem 9 usability feature: filter &amp; sort toolbar</h2>
+<p class="goal">Goal: shoppers can narrow the catalogue to the right rack in a few clicks, without scrolling 102 products or waiting for the AI.</p>
+<h3>Steps</h3>
+<ol class="steps">
+<li>Open <strong>Products</strong>: all 102 items are shown.</li>
+<li>Click the <strong>Hoodies</strong> category chip, set sort to <strong>Price: low to high</strong>, and tick <strong>In stock only</strong>.</li>
+</ol>
+<div class="figs">
+<figure class="wide"><a href="app_check_images/09_filters_before.png" target="_blank"><img src="app_check_images/09_filters_before.png" alt="Before: &lt;q&gt;Showing 102 of 102&lt;/q&gt;, the full catalogue. The toolbar has a search box, sort menu, in-stock toggle and category chips with counts." loading="lazy"></a>
+<figcaption><span class="fname">09_filters_before.png</span>Before: <q>Showing 102 of 102</q>, the full catalogue. The toolbar has a search box, sort menu, in-stock toggle and category chips with counts.</figcaption></figure>
+<figure class="wide"><a href="app_check_images/10_filters_after.png" target="_blank"><img src="app_check_images/10_filters_after.png" alt="After: Hoodies + Price low→high + In stock only → &lt;q&gt;Showing 27 of 102 · Clear filters&lt;/q&gt;. Prices now run &lt;strong&gt;$45.00 → $88.00&lt;/strong&gt; in order. &lt;q&gt;Clear filters&lt;/q&gt; resets everything in one click." loading="lazy"></a>
+<figcaption><span class="fname">10_filters_after.png</span>After: Hoodies + Price low→high + In stock only → <q>Showing 27 of 102 · Clear filters</q>. Prices now run <strong>$45.00 → $88.00</strong> in order. <q>Clear filters</q> resets everything in one click.</figcaption></figure>
+<figure class="narrow"><a href="app_check_images/11_quick_reply_chip_answer.png" target="_blank"><img src="app_check_images/11_quick_reply_chip_answer.png" alt="&lt;strong&gt;Bonus (also Problem 9):&lt;/strong&gt; on the Morse 1/4 Zip page the chat offers one-tap chips (What sizes are in stock?, Tell me more about this, Show me similar items). Tapping &lt;q&gt;What sizes are in stock?&lt;/q&gt; answered: “The Morse 1/4 Zip is in stock in XS (15), S (2), M (8), XL (25), and XXL (2). L is currently sold out. Boola Boola!” DB: XS=15, S=2, M=8, L=0, XL=25, XXL=2 ✔" loading="lazy"></a>
+<figcaption><span class="fname">11_quick_reply_chip_answer.png</span><strong>Bonus (also Problem 9):</strong> on the Morse 1/4 Zip page the chat offers one-tap chips (What sizes are in stock?, Tell me more about this, Show me similar items). Tapping <q>What sizes are in stock?</q> answered: “The Morse 1/4 Zip is in stock in XS (15), S (2), M (8), XL (25), and XXL (2). L is currently sold out. Boola Boola!” DB: XS=15, S=2, M=8, L=0, XL=25, XXL=2 ✔</figcaption></figure>
+</div>
+<h3>Verified</h3>
+<table><tr><th>Check</th><th>Site showed</th><th>Expected</th><th>Result</th></tr>
+<tr><td>Hoodies + in stock count</td><td>27 of 102</td><td>27 hoodies, all with stock &gt; 0 in DB</td><td class="ok">✔ Match</td></tr>
+<tr><td>Price sort</td><td>$45.00, $45.00, $68.00 … $88.00</td><td>Ascending</td><td class="ok">✔</td></tr>
+<tr><td>Quick-reply chip stock answer</td><td>XS 15, S 2, M 8, L sold out, XL 25, XXL 2</td><td>XS=15, S=2, M=8, L=0, XL=25, XXL=2</td><td class="ok">✔ Match</td></tr></table>
+</section>
+
+<footer>Screenshots were captured automatically from the live site with headless Chrome (puppeteer-core), and the captions quote the text the site actually showed. Images live in <code>output/app_check_images/</code>. Open this file directly; it needs no server or internet.</footer>
+</main></body></html>
